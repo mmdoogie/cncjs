@@ -71,6 +71,7 @@ class EditMacro extends PureComponent {
                                 value={name}
                                 validations={[validations.required]}
                             />
+                            <label><i>macro-id: {id}</i></label>
                         </div>
                         <div className="form-group">
                             <div>
