@@ -536,5 +536,9 @@
     "The URL must be for a Motion JPEG (mjpeg) HTTP or RTSP stream.": "",
     "Display G-code Messages": "",
     "Program Message": "",
-    "none": ""
+    "none": "",
+    "G-code: M0 Hold Encountered": "",
+    "G-code: M1 Hold Encountered": "",
+    "G-code: M5 Spindle Stop Encountered": "",
+    "G-code: M6 Tool Change Encountered": ""
 }
