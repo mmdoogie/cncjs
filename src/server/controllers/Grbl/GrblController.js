@@ -35,6 +35,7 @@ import {
     GRBL_SETTINGS
 } from './constants';
 
+
 // % commands
 const WAIT = '%wait';
 
@@ -216,9 +217,11 @@ class GrblController {
                     if (programMode === 'M0') {
                         log.debug('M0 Program Pause');
                         this.feeder.hold({ data: 'M0' }); // Hold reason
+                        this.event.trigger('gcode:M0');
                     } else if (programMode === 'M1') {
                         log.debug('M1 Program Pause');
                         this.feeder.hold({ data: 'M1' }); // Hold reason
+                        this.event.trigger('gcode:M1');
                     }
                 }
 
@@ -226,6 +229,7 @@ class GrblController {
                 if (_.includes(words, 'M6')) {
                     log.debug('M6 Tool Change');
                     this.feeder.hold({ data: 'M6' }); // Hold reason
+                    this.event.trigger('gcode:M6');
 
                     // Surround M6 with parentheses to ignore
                     // unsupported command error. If we nuke the whole
@@ -233,6 +237,10 @@ class GrblController {
                     // share the line, like a T~.  This makes tool
                     // changes complicated.
                     line = line.replace('M6', '(M6)');
+                }
+
+                if (_.includes(words, 'M5')) {
+                    this.event.trigger('gcode:M5');
                 }
 
                 return line;
@@ -302,9 +310,11 @@ class GrblController {
                     if (programMode === 'M0') {
                         log.debug(`M0 Program Pause: line=${sent + 1}, sent=${sent}, received=${received}`);
                         this.workflow.pause({ data: 'M0' });
+                        this.event.trigger('gcode:M0');
                     } else if (programMode === 'M1') {
                         log.debug(`M1 Program Pause: line=${sent + 1}, sent=${sent}, received=${received}`);
                         this.workflow.pause({ data: 'M1' });
+                        this.event.trigger('gcode:M1');
                     }
                 }
 
@@ -312,9 +322,14 @@ class GrblController {
                 if (_.includes(words, 'M6')) {
                     log.debug(`M6 Tool Change: line=${sent + 1}, sent=${sent}, received=${received}`);
                     this.workflow.pause({ data: 'M6' });
+                    this.event.trigger('gcode:M6');
 
                     // Surround M6 with parentheses to ignore unsupported command error
                     line = line.replace('M6', '(M6)');
+                }
+
+                if (_.includes(words, 'M5')) {
+                    this.event.trigger('gcode:M5');
                 }
 
                 return line;
