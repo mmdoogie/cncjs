@@ -10,13 +10,11 @@ import { Form, Select, Textarea } from 'app/components/Validation';
 import i18n from 'app/lib/i18n';
 import * as validations from 'app/lib/validations';
 import styles from '../form.styl';
-
-const SYSTEM_EVENTS = [
-    // The following events are only available with system trigger (i.e. scripts)
-    'startup',
-    'port:open',
-    'port:close'
-];
+import {
+    SYSTEM_EVENTS,
+    DUAL_EVENTS,
+    mapEventToName
+} from './constants';
 
 class CreateRecord extends PureComponent {
     static propTypes = {
@@ -127,22 +125,8 @@ class CreateRecord extends PureComponent {
                                     validations={[validations.required]}
                                 >
                                     <option value="">{i18n._('Choose an event')}</option>
-                                    <option value="startup">{i18n._('Startup (System only)')}</option>
-                                    <option value="port:open">{i18n._('Open a serial port (System only)')}</option>
-                                    <option value="port:close">{i18n._('Close a serial port (System only)')}</option>
-                                    <option value="controller:ready">{i18n._('Ready to start')}</option>
-                                    <option value="gcode:load">{i18n._('G-code: Load')}</option>
-                                    <option value="gcode:unload">{i18n._('G-code: Unload')}</option>
-                                    <option value="gcode:start">{i18n._('G-code: Start')}</option>
-                                    <option value="gcode:stop">{i18n._('G-code: Stop')}</option>
-                                    <option value="gcode:pause">{i18n._('G-code: Pause')}</option>
-                                    <option value="gcode:resume">{i18n._('G-code: Resume')}</option>
-                                    <option value="feedhold">{i18n._('Feed Hold')}</option>
-                                    <option value="cyclestart">{i18n._('Cycle Start')}</option>
-                                    <option value="homing">{i18n._('Homing')}</option>
-                                    <option value="sleep">{i18n._('Sleep')}</option>
-                                    <option value="macro:run">{i18n._('Run Macro')}</option>
-                                    <option value="macro:load">{i18n._('Load Macro')}</option>
+                                    {SYSTEM_EVENTS.map((evt) => <option value={evt}>{mapEventToName(evt)}</option>)}
+                                    {DUAL_EVENTS.map((evt) => <option value={evt}>{mapEventToName(evt)}</option>)}
                                 </Select>
                             </div>
                             <div className={styles.formGroup}>
