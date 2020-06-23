@@ -15,28 +15,11 @@ import portal from 'app/lib/portal';
 import i18n from 'app/lib/i18n';
 import {
     MODAL_CREATE_RECORD,
-    MODAL_UPDATE_RECORD
+    MODAL_UPDATE_RECORD,
+    mapEventToName
 } from './constants';
 import styles from './index.styl';
 
-const mapEventToTextString = (event) => ({
-    'startup': i18n._('Startup (System only)'),
-    'port:open': i18n._('Open a serial port (System only)'),
-    'port:close': i18n._('Close a serial port (System only)'),
-    'controller:ready': i18n._('Ready to start'),
-    'gcode:load': i18n._('G-code: Load'),
-    'gcode:unload': i18n._('G-code: Unload'),
-    'gcode:start': i18n._('G-code: Start'),
-    'gcode:stop': i18n._('G-code: Stop'),
-    'gcode:pause': i18n._('G-code: Pause'),
-    'gcode:resume': i18n._('G-code: Resume'),
-    'feedhold': i18n._('Feed Hold'),
-    'cyclestart': i18n._('Cycle Start'),
-    'homing': i18n._('Homing'),
-    'sleep': i18n._('Sleep'),
-    'macro:run': i18n._('Run Macro'),
-    'macro:load': i18n._('Load Macro')
-}[event] || '');
 
 class TableRecords extends PureComponent {
     static propTypes = {
@@ -131,7 +114,7 @@ class TableRecords extends PureComponent {
                         className: 'text-nowrap',
                         key: 'event',
                         render: (value, row, index) => {
-                            return mapEventToTextString(row.event);
+                            return mapEventToName(row.event);
                         }
                     },
                     {
@@ -232,7 +215,7 @@ class TableRecords extends PureComponent {
                                                             {i18n._('Are you sure you want to delete this item?')}
                                                         </FormGroup>
                                                         <FormGroup>
-                                                            {mapEventToTextString(row.event)}
+                                                            {mapEventToName(row.event)}
                                                         </FormGroup>
                                                     </Modal.Body>
                                                     <Modal.Footer>
