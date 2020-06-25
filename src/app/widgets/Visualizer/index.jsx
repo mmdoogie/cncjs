@@ -423,6 +423,55 @@ class VisualizerWidget extends PureComponent {
                 controller.command('gcode:resume');
             }
         },
+        handleRunSingleStep: () => {
+            const { workflow } = this.state;
+            console.assert(includes([WORKFLOW_STATE_IDLE, WORKFLOW_STATE_PAUSED], workflow.state));
+
+            if (workflow.state === WORKFLOW_STATE_IDLE) {
+                controller.command('gcode:start', { singleStep: true });
+                return;
+            }
+
+            if (workflow.state === WORKFLOW_STATE_PAUSED) {
+                const { notification } = this.state;
+
+                // M6 Tool Change
+                if (notification.type === NOTIFICATION_M6_TOOL_CHANGE) {
+                    portal(({ onClose }) => (
+                        <Modal disableOverlay size="xs" onClose={onClose}>
+                            <Modal.Header>
+                                <Modal.Title>
+                                    {i18n._('Tool Change')}
+                                </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                {i18n._('Are you sure you want to resume program execution?')}
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button onClick={onClose}>
+                                    {i18n._('No')}
+                                </Button>
+                                <Button
+                                    btnStyle="primary"
+                                    onClick={chainedFunction(
+                                        () => {
+                                            controller.command('gcode:resume', { singleStep: true });
+                                        },
+                                        onClose
+                                    )}
+                                >
+                                    {i18n._('Yes')}
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
+                    ));
+
+                    return;
+                }
+
+                controller.command('gcode:resume', { singleStep: true });
+            }
+        },
         handlePause: () => {
             const { workflow } = this.state;
             console.assert(includes([WORKFLOW_STATE_RUNNING], workflow.state));
