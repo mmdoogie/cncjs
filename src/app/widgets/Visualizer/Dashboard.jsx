@@ -32,16 +32,23 @@ class Dashboard extends PureComponent {
 
     lines = [];
 
-    renderItem = ({ index, style }) => (
-        <div key={index} style={style}>
-            <div className={styles.line}>
-                <span className={cx(styles.label, styles.labelDefault)}>
-                    {index + 1}
-                </span>
-                {escape(this.lines[index])}
+    sent = 0;
+
+    renderItem = ({ index, style }) => {
+        const highlight = this.sent === index + 1;
+        const labelStyle = highlight ? styles.labelHighlight : styles.labelDefault;
+
+        return (
+            <div key={index} style={style}>
+                <div className={styles.line}>
+                    <span className={cx(styles.label, labelStyle)}>
+                        {index + 1}
+                    </span>
+                    {escape(this.lines[index])}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     resizeVirtualList = throttle(() => {
         if (!this.node.virtualList) {
@@ -92,6 +99,7 @@ class Dashboard extends PureComponent {
         const filename = state.gcode.name || 'noname.nc';
         const filesize = state.gcode.ready ? formatBytes(state.gcode.size, 0) : '';
         const { sent = 0, total = 0 } = state.gcode;
+        this.sent = sent;
         const { virtualList } = this.state;
         const rowHeight = 20;
 
@@ -156,7 +164,7 @@ class Dashboard extends PureComponent {
                                 itemCount={this.lines.length}
                                 itemSize={rowHeight}
                                 renderItem={this.renderItem}
-                                scrollToIndex={sent}
+                                scrollToIndex={sent - 1}
                             />
                         )}
                         {this.lines.length === 0 && (
