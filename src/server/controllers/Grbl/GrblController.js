@@ -1084,9 +1084,7 @@ class GrblController {
             'gcode:start': () => {
                 const [options] = args;
                 const { singleStep = false } = { ...options };
-                log.debug('*** start ss:' + JSON.stringify(singleStep));
                 this.sender.state.singleStep = singleStep;
-
                 this.event.trigger('gcode:start');
 
                 this.workflow.start();
@@ -1143,7 +1141,6 @@ class GrblController {
             'gcode:resume': () => {
                 const [options] = args;
                 const { singleStep = false } = { ...options };
-                log.debug('*** resume ss:' + singleStep);
                 this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:resume');
 
