@@ -1,6 +1,6 @@
 {
   "name": "cncjs-app",
-  "version": "1.9.22",
+  "version": "1.9.23-m+7aceb8b7",
   "productName": "CNCjs",
   "description": "CNC Milling Controller",
   "homepage": "https://github.com/cncjs/cncjs",
