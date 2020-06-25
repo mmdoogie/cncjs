@@ -446,7 +446,7 @@ class GrblController {
                 return;
             }
 
-            const { hold, sent, received } = this.sender.state;
+            const { hold, total, sent, received } = this.sender.state;
 
             if (this.workflow.state === WORKFLOW_STATE_RUNNING) {
                 if (hold && (received + 1 >= sent)) {
@@ -454,7 +454,7 @@ class GrblController {
                     this.sender.unhold();
                 }
                 this.sender.ack();
-                if (!this.sender.state.singleStep) {
+                if (!this.sender.state.singleStep || (sent === total)) {
                     this.sender.next();
                 } else {
                     this.workflow.pause({ data: 'Single Step' });
