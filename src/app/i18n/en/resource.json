@@ -534,11 +534,15 @@
     "Ready to start": "Ready to start",
     "Connect to an IP camera": "Connect to an IP camera",
     "The URL must be for a Motion JPEG (mjpeg) HTTP or RTSP stream.": "The URL must be for a Motion JPEG (mjpeg) HTTP or RTSP stream.",
-    "Display G-code Messages": "Display G-code Messages",
-    "Program Message": "Program Message",
-    "none": "none",
+    "Single Step": "Single Step",
+    "Single Step Performed": "Single Step Performed",
+    "Resume (single-step)": "Resume (single-step)",
+    "Run (single-step)": "Run (single-step)",
     "G-code: M0 Hold Encountered": "G-code: M0 Hold Encountered",
     "G-code: M1 Hold Encountered": "G-code: M1 Hold Encountered",
     "G-code: M5 Spindle Stop Encountered": "G-code: M5 Spindle Stop Encountered",
-    "G-code: M6 Tool Change Encountered": "G-code: M6 Tool Change Encountered"
+    "G-code: M6 Tool Change Encountered": "G-code: M6 Tool Change Encountered",
+    "Program Message": "Program Message",
+    "none": "none",
+    "Display G-code Messages": "Display G-code Messages"
 }
