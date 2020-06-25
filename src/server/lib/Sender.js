@@ -137,7 +137,8 @@ class Sender extends events.EventEmitter {
         finishTime: 0,
         elapsedTime: 0,
         remainingTime: 0,
-        message: null
+        message: null,
+        singleStep: false
     };
 
     stateChanged = false;
@@ -195,6 +196,9 @@ class Sender extends events.EventEmitter {
                     sp.dataLength += line.length;
                     sp.queue.push(line.length);
                     this.emit('data', line, this.state.context);
+                    if (this.state.singleStep) {
+                        break;
+                    }
                 }
             });
         }
