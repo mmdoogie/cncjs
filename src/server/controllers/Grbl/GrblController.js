@@ -454,7 +454,11 @@ class GrblController {
                     this.sender.unhold();
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
                 return;
             }
 
@@ -466,7 +470,12 @@ class GrblController {
                     log.debug(`Stop sending G-code: hold=${hold}, sent=${sent}, received=${received + 1}`);
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
+
                 return;
             }
 
@@ -504,7 +513,11 @@ class GrblController {
                 }
 
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
 
                 return;
             }
@@ -1084,6 +1097,11 @@ class GrblController {
                 this.command('gcode:start');
             },
             'gcode:start': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                log.debug('*** start ss:' + JSON.stringify(singleStep));
+                this.sender.state.singleStep = singleStep;
+
                 this.event.trigger('gcode:start');
 
                 this.workflow.start();
@@ -1138,6 +1156,10 @@ class GrblController {
                 this.command('gcode:resume');
             },
             'gcode:resume': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                log.debug('*** resume ss:' + singleStep);
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:resume');
 
                 this.write('~');
