@@ -12,7 +12,8 @@ import {
     NOTIFICATION_M30_PROGRAM_END,
     NOTIFICATION_M6_TOOL_CHANGE,
     NOTIFICATION_M109_SET_EXTRUDER_TEMPERATURE,
-    NOTIFICATION_M190_SET_HEATED_BED_TEMPERATURE
+    NOTIFICATION_M190_SET_HEATED_BED_TEMPERATURE,
+    NOTIFICATION_SINGLE_STEP_PAUSE
 } from './constants';
 
 const Notifications = ({ show, type, data, onDismiss, style, ...props }) => (
@@ -37,7 +38,8 @@ const Notifications = ({ show, type, data, onDismiss, style, ...props }) => (
                 [NOTIFICATION_M30_PROGRAM_END]: 'success',
                 [NOTIFICATION_M6_TOOL_CHANGE]: 'info',
                 [NOTIFICATION_M109_SET_EXTRUDER_TEMPERATURE]: 'warning',
-                [NOTIFICATION_M190_SET_HEATED_BED_TEMPERATURE]: 'warning'
+                [NOTIFICATION_M190_SET_HEATED_BED_TEMPERATURE]: 'warning',
+                [NOTIFICATION_SINGLE_STEP_PAUSE]: 'success'
             }[type]}
             onDismiss={onDismiss}
         >
@@ -96,6 +98,12 @@ const Notifications = ({ show, type, data, onDismiss, style, ...props }) => (
                 <div>
                     <div><strong>{i18n._('M190 Set Heated Bed Temperature')}</strong></div>
                     <div>{i18n._('Waiting for the target temperature to be reached...')}</div>
+                </div>
+            )}
+            {type === NOTIFICATION_SINGLE_STEP_PAUSE && (
+                <div>
+                    <div><strong>{i18n._('Single Step')}</strong></div>
+                    <div>{i18n._('Single Step Performed')}</div>
                 </div>
             )}
         </ToastNotification>
