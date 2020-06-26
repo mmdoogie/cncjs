@@ -87,7 +87,8 @@ test('send-response streaming protocol', (t) => {
             finishTime: 0,
             elapsedTime: 0,
             remainingTime: 0,
-            message: ''
+            message: '',
+            singleStep: false
         });
         t.same(sender.toJSON(), {
             sp: SP_TYPE_SEND_RESPONSE,
@@ -219,7 +220,8 @@ test('character-counting streaming protocol', (t) => {
             finishTime: 0,
             elapsedTime: 0,
             remainingTime: 0,
-            message: ''
+            message: '',
+            singleStep: false
         });
         t.same(sender.toJSON(), {
             sp: SP_TYPE_CHAR_COUNTING,
