@@ -395,7 +395,7 @@ class SmoothieController {
                 return;
             }
 
-            const { hold, sent, received } = this.sender.state;
+            const { hold, total, sent, received } = this.sender.state;
 
             if (this.workflow.state === WORKFLOW_STATE_RUNNING) {
                 if (hold && (received + 1 >= sent)) {
@@ -403,7 +403,11 @@ class SmoothieController {
                     this.sender.unhold();
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep || (sent === total)) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
                 return;
             }
 
@@ -415,7 +419,12 @@ class SmoothieController {
                     log.debug(`Stop sending G-code: hold=${hold}, sent=${sent}, received=${received + 1}`);
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
+
                 return;
             }
 
@@ -440,7 +449,11 @@ class SmoothieController {
                 }
 
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
 
                 return;
             }
@@ -981,6 +994,9 @@ class SmoothieController {
                 this.command('gcode:start');
             },
             'gcode:start': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:start');
 
                 this.workflow.start();
@@ -1023,6 +1039,9 @@ class SmoothieController {
                 this.command('gcode:resume');
             },
             'gcode:resume': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:resume');
 
                 this.write('~');

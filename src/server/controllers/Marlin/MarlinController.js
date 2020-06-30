@@ -633,7 +633,7 @@ class MarlinController {
                 return;
             }
 
-            const { hold, sent, received } = this.sender.state;
+            const { hold, total, sent, received } = this.sender.state;
 
             if (this.workflow.state === WORKFLOW_STATE_RUNNING) {
                 if (hold && (received + 1 >= sent)) {
@@ -641,7 +641,11 @@ class MarlinController {
                     this.sender.unhold();
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep || (sent === total)) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
                 return;
             }
 
@@ -653,7 +657,12 @@ class MarlinController {
                     log.debug(`Stop sending G-code: hold=${hold}, sent=${sent}, received=${received + 1}`);
                 }
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
+
                 return;
             }
 
@@ -681,7 +690,11 @@ class MarlinController {
                 }
 
                 this.sender.ack();
-                this.sender.next();
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
 
                 return;
             }
@@ -1091,6 +1104,9 @@ class MarlinController {
                 this.command('gcode:start');
             },
             'gcode:start': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:start');
 
                 this.workflow.start();
@@ -1126,6 +1142,9 @@ class MarlinController {
                 this.command('gcode:resume');
             },
             'gcode:resume': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:resume');
 
                 this.workflow.resume();

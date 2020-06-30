@@ -432,8 +432,12 @@ class TinyGController {
                 this.senderStatus = SENDER_STATUS_ACK;
                 if (!this.blocked) {
                     this.sender.ack();
-                    this.sender.next();
-                    this.senderStatus = SENDER_STATUS_NEXT;
+                    if (!this.sender.state.singleStep) {
+                        this.sender.next();
+                        this.senderStatus = SENDER_STATUS_NEXT;
+                    } else {
+                        this.workflow.pause({ data: 'Single Step' });
+                    }
                 }
                 return;
             }
@@ -456,8 +460,12 @@ class TinyGController {
                 log.silly(`ack: n=${n}, blocked=${this.blocked}, hold=${hold}, sent=${sent}, received=${received}`);
                 this.senderStatus = SENDER_STATUS_ACK;
                 this.sender.ack();
-                this.sender.next();
-                this.senderStatus = SENDER_STATUS_NEXT;
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                    this.senderStatus = SENDER_STATUS_NEXT;
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
                 return;
             }
 
@@ -488,13 +496,21 @@ class TinyGController {
                     if (hold && (received >= sent) && (qr >= this.runner.plannerBufferPoolSize)) {
                         log.debug(`Continue sending G-code: hold=${hold}, sent=${sent}, received=${received}, qr=${qr}`);
                         this.sender.unhold();
-                        this.sender.next();
-                        this.senderStatus = SENDER_STATUS_NEXT;
+                        if (!this.sender.state.singleStep) {
+                            this.sender.next();
+                            this.senderStatus = SENDER_STATUS_NEXT;
+                        } else {
+                            this.workflow.pause({ data: 'Single Step' });
+                        }
                     }
                 } else if (this.senderStatus === SENDER_STATUS_ACK) {
                     this.sender.ack();
-                    this.sender.next();
-                    this.senderStatus = SENDER_STATUS_NEXT;
+                    if (!this.sender.state.singleStep) {
+                        this.sender.next();
+                        this.senderStatus = SENDER_STATUS_NEXT;
+                    } else {
+                        this.workflow.pause({ data: 'Single Step' });
+                    }
                 }
                 return;
             }
@@ -513,8 +529,12 @@ class TinyGController {
                     log.debug(`Stop sending G-code: hold=${hold}, sent=${sent}, received=${received + 1}`);
                 }
                 this.sender.ack();
-                this.sender.next();
-                this.senderStatus = SENDER_STATUS_NEXT;
+                if (!this.sender.state.singleStep) {
+                    this.sender.next();
+                    this.senderStatus = SENDER_STATUS_NEXT;
+                } else {
+                    this.workflow.pause({ data: 'Single Step' });
+                }
                 return;
             }
 
@@ -1107,6 +1127,9 @@ class TinyGController {
                 this.command('gcode:start');
             },
             'gcode:start': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:start');
 
                 this.workflow.start();
@@ -1168,6 +1191,9 @@ class TinyGController {
                 this.command('gcode:resume');
             },
             'gcode:resume': () => {
+                const [options] = args;
+                const { singleStep = false } = { ...options };
+                this.sender.state.singleStep = singleStep;
                 this.event.trigger('gcode:resume');
 
                 this.writeln('~'); // cycle start
